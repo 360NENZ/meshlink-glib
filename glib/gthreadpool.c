@@ -501,7 +501,7 @@ g_thread_pool_start_thread (GRealThreadPool  *pool,
            */
           if (have_shared_thread_scheduler_settings)
             {
-              thread = g_thread_new_internal (name, g_thread_proxy, g_thread_pool_thread_proxy, pool, 0, &shared_thread_scheduler_settings, error);
+              thread = g_thread_new_internal (NULL, g_thread_proxy, g_thread_pool_thread_proxy, pool, 0, &shared_thread_scheduler_settings, error);
             }
           else
             {
