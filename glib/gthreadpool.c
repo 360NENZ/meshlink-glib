@@ -317,12 +317,6 @@ g_thread_pool_spawn_thread (gpointer data)
       SpawnThreadData *spawn_thread_data;
       GThread *thread = NULL;
       GError *error = NULL;
-      const gchar *prgname = g_get_prgname ();
-      gchar name[16] = "pool";
-
-      if (prgname)
-        g_snprintf (name, sizeof (name), "pool-%s", prgname);
-
       g_async_queue_lock (spawn_thread_queue);
       /* Spawn a new thread for the given pool and wake the requesting thread
        * up again with the result. This new thread will have the scheduler
@@ -334,7 +328,7 @@ g_thread_pool_spawn_thread (gpointer data)
           g_async_queue_unlock (spawn_thread_queue);
           break;
         }
-      thread = g_thread_try_new (name, g_thread_pool_thread_proxy, spawn_thread_data->pool, &error);
+      thread = g_thread_try_new (NULL, g_thread_pool_thread_proxy, spawn_thread_data->pool, &error);
 
       spawn_thread_data->thread = g_steal_pointer (&thread);
       spawn_thread_data->error = g_steal_pointer (&error);
@@ -486,12 +480,7 @@ g_thread_pool_start_thread (GRealThreadPool  *pool,
 
   if (!success)
     {
-      const gchar *prgname = g_get_prgname ();
-      gchar name[16] = "pool";
       GThread *thread;
-
-      if (prgname)
-        g_snprintf (name, sizeof (name), "pool-%s", prgname);
 
       /* No thread was found, we have to start a new one */
       if (pool->pool.exclusive)
@@ -500,7 +489,7 @@ g_thread_pool_start_thread (GRealThreadPool  *pool,
            * we simply start new threads that inherit the scheduler settings
            * from the current thread.
            */
-          thread = g_thread_try_new (name, g_thread_pool_thread_proxy, pool, error);
+          thread = g_thread_try_new (NULL, g_thread_pool_thread_proxy, pool, error);
         }
       else
         {
@@ -1483,7 +1472,7 @@ g_thread_pool_resume_spawner (void)
   if (!g_thread_pool_has_spawner ())
     return;
 
-  spawn_thread = g_thread_new ("pool-spawner",
+  spawn_thread = g_thread_new (NULL,
                                g_thread_pool_spawn_thread, NULL);
 }
 

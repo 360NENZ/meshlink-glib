@@ -6820,7 +6820,7 @@ glib_worker_start (void)
 
   glib_worker_running = TRUE;
 
-  glib_worker_thread = g_thread_new ("gmain", glib_worker_main, NULL);
+  glib_worker_thread = g_thread_new (NULL, glib_worker_main, NULL);
 
 #ifdef G_OS_UNIX
   pthread_sigmask (SIG_SETMASK, &prev_mask, NULL);
